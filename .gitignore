@@ -2,3 +2,7 @@
 # Large model files
 *.pkl
 *.pt
+*.pkl
+*.pt
+rotate_result/trained_model.pkl
+rotate_result/rotate_fb15k237.pt
