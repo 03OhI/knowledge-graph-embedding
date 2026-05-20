@@ -12,53 +12,55 @@ import pykeen.predict
 from pykeen.datasets import Nations # 샘플 데이터셋 추후 민석이 구해온 데이터셋으로 대체 예정
 
 
-OUTPUT = 'transe_result'
-os.makedirs(OUTPUT, exist_ok=True) # OUTPUT 디렉터리생성
+OUTPUT = 'transe_fb15k237_result'
+os.makedirs(OUTPUT, exist_ok=True)
 
-device = torch.device("cpu")
+# FB15k-237은 GPU 거의 필수 (CPU로는 매우 오래 걸림)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
 
-print("TrasE 모델 학습 및 시각화 시작")
+print("TransE 모델 학습 및 시각화 시작 (FB15k-237)")
 
-# pipeline 함수로 모델 학습 및 평가를 수행(자동으로 파라미터 설정해줌)
 result = pipeline(
-    dataset='nations',
+    dataset='fb15k237',
     model='TransE',
     # 모델 설정
     model_kwargs=dict(
-        embedding_dim=50, # 임베딩 차원
-        scoring_fct_norm=1, # L1 거리 공식 사용
+        embedding_dim=128,        # 50 -> 128 (큰 그래프에는 더 높은 차원이 일반적)
+        scoring_fct_norm=1,       # L1 거리
     ),
     device=device,
     # 학습 설정
     training_kwargs=dict(
-        num_epochs=100, # 에폭 수
-        batch_size=64, # 배치 크기
+        num_epochs=100,
+        batch_size=1024,          # 64 -> 1024 (데이터가 크므로 배치 크게)
         use_tqdm=True,
     ),
-    # 정규화 설정
-    optimizer_kwargs=dict(lr=1e-2),
+    # 옵티마이저 설정
+    optimizer_kwargs=dict(lr=1e-3),  # 1e-2 -> 1e-3 (큰 데이터셋엔 더 작은 lr이 안정적)
+    # Negative sampling 설정 (TransE 학습 품질에 중요)
+    negative_sampler='basic',
+    negative_sampler_kwargs=dict(
+        num_negs_per_pos=64,
+    ),
+    # 필터드 평가 (대규모 벤치마크 표준)
+    evaluator_kwargs=dict(filtered=True),
 )
 
-# 학습 결과 저장
+# 결과 저장
 result.save_to_directory(OUTPUT)
-print(f"모델과 결과를 '{OUTPUT}'에 저장.")
+print(f"\n학습 완료. 결과 저장 위치: {OUTPUT}")
 
-# 모델 성능평가(MRR, Hits@1, Hits@10)
-# MetricResults 객체에서 주요 지표를 가져옵니다 (Filtered 방식)
-print("\n--- 모델 성능 평가 ---")
-results_dict = result.metric_results.to_flat_dict()
-mrr = results_dict.get('both.realistic.inverse_harmonic_mean_rank')
-
-hits_at_10 = results_dict.get('both.realistic.hits_at_10') or \
-             results_dict.get('both.avg.hits_at_10')
-
-print(f"MRR: {mrr:.4f}" if mrr else "MRR 키를 찾을 수 없음.")
-print(f"Hits@10: {hits_at_10:.4f}" if hits_at_10 else "Hits@10 키를 찾을 수 없음.")
-
-
-# 시각화를 위한 임베딩 추출 및 차원 축소
-print("\n시각화 준비. 임베딩 추출 및 차원 축소 실행")
-
+# 평가 메트릭 출력
+print("\n=== 평가 결과 (both / realistic) ===")
+mr = result.get_metric('arithmetic_mean_rank')
+mrr = result.get_metric('inverse_harmonic_mean_rank')
+h1 = result.get_metric('hits@1')
+h10 = result.get_metric('hits@10')
+print(f"Mean Rank: {mr:.2f}")
+print(f"MRR:       {mrr:.4f}")
+print(f"Hits@1:    {h1:.4f}")
+print(f"Hits@10:   {h10:.4f}")
 # 학습된 모델
 model = result.model
 
