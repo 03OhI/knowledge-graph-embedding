@@ -22,14 +22,14 @@ print("ComplEx 모델 학습 및 시각화 시작")
 
 # pipeline 함수로 모델 학습 및 평가를 수행(자동으로 파라미터 설정해줌)
 result = pipeline(
-    dataset='FB15k237', 
+    dataset='FB15k237',
     model='ComplEx',
     model_kwargs=dict(embedding_dim=500),
     device=device,
     # 중복되었던 부분을 하나로 통합했습니다.
     training_kwargs=dict(
         num_epochs=700,   # 100회는 오래 걸릴 수 있으니 우선 50회로 테스트 권장
-        batch_size=64, 
+        batch_size=64,
         use_tqdm=True,
     ),
     optimizer_kwargs=dict(lr=1e-2),
@@ -117,9 +117,9 @@ relation_embeddings = model.relation_representations[0](relation_ids).detach().c
 # # 점 위에 개체 이름 표시
 # for i in range(df_tsne.shape[0]):
 #     plt.text(
-#         x=df_tsne.x[i]+0.2, 
-#         y=df_tsne.y[i]+0.2, 
-#         s=df_tsne.entity[i], 
+#         x=df_tsne.x[i]+0.2,
+#         y=df_tsne.y[i]+0.2,
+#         s=df_tsne.entity[i],
 #         fontdict=dict(color='black', size=9),
 #         alpha=0.7
 #     )
@@ -154,8 +154,8 @@ relation_embeddings = model.relation_representations[0](relation_ids).detach().c
 # --- 3차원 시각화 (Plotly 사용) ---
 print("3차원 차원 축소 중...")
 tsne_3d = TSNE(
-    n_components=3, 
-    random_state=42, 
+    n_components=3,
+    random_state=42,
     perplexity=min(30, len(entity_names)-1),
     max_iter=1000
 )
@@ -167,7 +167,7 @@ df_3d['entity'] = entity_names
 
 # 3. Plotly를 이용한 3D 산점도 생성
 fig = px.scatter_3d(
-    df_3d, 
+    df_3d,
     x='x', y='y', z='z',
     text='entity',      # 점 위에 마우스를 올리면 이름이 나옴
     color='x',          # 좌표값에 따라 색상을 입혀 입체감을 높임
@@ -187,10 +187,10 @@ print(f"3D 시각화 완료: {OUTPUT}/complex_3d_visualization.html")
 # --- 링크 예측 테스트 (Link Prediction) ---
 print("\n--- 링크 예측 테스트 (Link Prediction) ---")
 
-# 데이터셋에 들어있는 실제 관계 이름들 확인 
+# 데이터셋에 들어있는 실제 관계 이름들 확인
 relations = list(result.training.relation_to_id.keys())
 # 'diplomatic'이 포함된 실제 관계 이름을 찾기
-target_rel = [r for r in relations if 'diplom' in r.lower()][0] 
+target_rel = [r for r in relations if 'diplom' in r.lower()][0]
 print(f"예측에 사용할 실제 관계 이름: {target_rel}")
 
 # 2. 찾은 정확한 이름을 넣어서 예측 실행
