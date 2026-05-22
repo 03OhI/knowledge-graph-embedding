@@ -134,8 +134,33 @@ result = pipeline(
 |RotatE|0.60|0.98|
 |ComplEx|0.54|0.97|
 
+## FB15K-237 데이터셋 학습 후 정확도 측정
+|------|---|--------|
+|TransE|0.28|0.47|
+|RotatE|0.28|0.47|
+|ComplEx|0.54|0.97|
+
 위 표를 보듯 nations 데이터셋에서는 RotatE가 가장 관계를 잘 나타냈다고 볼 수 있다.
 
-## 3D 시각화
+## 3D 시각화(nations 기준)
+# TransE
+<img width="999" height="783" alt="image" src="https://github.com/user-attachments/assets/785f4aa1-d9d3-4c02-9d0f-cc6b18adf1d9" />
+
+# RotatE
+<img width="1308" height="679" alt="image" src="https://github.com/user-attachments/assets/e1c64aca-a0e4-4282-b3dd-86efec928ccb" />
+
+# ComplEx
+<img width="2242" height="1716" alt="image" src="https://github.com/user-attachments/assets/9845cb27-e791-4fa9-8469-dfaf79b93cfb" />
+
+3차원 시각화의 경우, Nations의 데이터셋 크기가 작기 때문에 기대했던 "관계가 가까운 객체끼리 뭉쳐있을 것이다." 을 볼 순 없던 것 같다.
+
+## 3D 시각화(FB15k-237)
+# StatE
+<img width="895" height="726" alt="image" src="https://github.com/user-attachments/assets/169215d4-72aa-4a17-bd24-6a01663733f1" />
+
+# RotatE
+<img width="846" height="743" alt="image" src="https://github.com/user-attachments/assets/ebf013c1-29a2-41fd-8158-24a82f9d4bef" />
+
+# ComplEx
 
 
