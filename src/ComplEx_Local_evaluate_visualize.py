@@ -60,7 +60,7 @@ def main():
     results_path = os.path.join(OUTPUT, 'results.json')
 
     print("\n모델 로딩 중...")
-    model = torch.load(model_path, weights_only=False)
+    model = torch.load(model_path, map_location='cpu', weights_only=False)
     training_factory = TriplesFactory.from_path_binary(triples_path)
     model.eval()
 
