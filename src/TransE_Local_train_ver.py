@@ -43,17 +43,35 @@ def main():
     print(f"기존 파일: {os.listdir(OUTPUT)}")  # 체크포인트 있으면 자동 이어서 학습됨
 
     # ── 디바이스 설정 ─────────────────────────────────────────
-    torch.backends.cudnn.benchmark = True
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
-        device = torch.device("cuda")
-        print(f"장치: {device}")
-        print(f"GPU: {torch.cuda.get_device_name()}")
-        total_mem = torch.cuda.get_device_properties(0).total_memory / 1e9
-        print(f"VRAM: {total_mem:.2f}GB")
-    else:
-        device = torch.device("cpu")
-        print("⚠️  CUDA 사용 불가 — CPU로 실행됩니다 (매우 느림)")
+    # 윈도우용
+    # torch.backends.cudnn.benchmark = True
+    # if torch.cuda.is_available():
+    #     torch.cuda.empty_cache()
+    #     device = torch.device("cuda")
+    #     print(f"장치: {device}")
+    #     print(f"GPU: {torch.cuda.get_device_name()}")
+    #     total_mem = torch.cuda.get_device_properties(0).total_memory / 1e9
+    #     print(f"VRAM: {total_mem:.2f}GB")
+    # else:
+    #     device = torch.device("cpu")
+    #     print("⚠️  CUDA 사용 불가 — CPU로 실행됩니다 (매우 느림)")
+    # 맥용
+    # if torch.backends.mps.is_available():
+    #     device = torch.device("mps")
+    #     print(f"장치: Apple Silicon GPU ({device})")
+    # elif torch.cuda.is_available():
+    #     torch.backends.cudnn.benchmark = True
+    #     torch.cuda.empty_cache()
+    #     device = torch.device("cuda")
+    #     print(f"장치: {device}")
+    #     print(f"GPU: {torch.cuda.get_device_name()}")
+    #     total_mem = torch.cuda.get_device_properties(0).total_memory / 1e9
+    #     print(f"VRAM: {total_mem:.2f}GB")
+    # else:
+    #     device = torch.device("cpu")
+    #     print("⚠️  GPU 사용 불가 — CPU로 실행됩니다 (매우 느림)")
+    device = torch.device("cpu")
+    print("장치: CPU 강제 지정 (MPS 버그 우회)")
 
     # ── 학습 ──────────────────────────────────────────────────
     # TransE 핵심 차이점:
@@ -89,7 +107,11 @@ def main():
             relative_delta=0.0001, metric='mrr',
         ),
         evaluator_kwargs=dict(filtered=True),
-        evaluation_kwargs=dict(batch_size=16),
+        evaluation_kwargs=dict(
+            batch_size=16,
+            device=torch.device('cpu')
+        ),
+
         device=device,
         random_seed=args.seed,
     )
