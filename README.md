@@ -125,6 +125,18 @@ result = pipeline(
 <img width="1112" height="976" alt="image" src="https://github.com/user-attachments/assets/ce29ba21-5d68-41bc-ab66-cf92c9ba2d47" />
 
 ---
+# 데이터셋 구조
+## nations
+    1. 엔티티 : 14개(미국, 소련 등 주요 국가들)
+    2. 관계 : 55개(외교, 조약, 비난 등의 관계)
+    3. 학습 트리플 : 1992개(미국-외교-소련 등)
+    4. 특징 : 완전하게 이름이 매핑 되어 있어 직관적인 관계 이해 가능
+
+## FB15K-237
+    1. 엔티티 : 14,541개(인물, 영화, 스포츠 팀 등 다양한 도메인)
+    2. 관계 : 237개(출생지, 배우, 국적 등)
+    3. 학습 트리플 : 272,115개(인물-배우-영화 등)
+    4. 특징 : 역관계를 제거하여 학습 효율 좋음
 
 # 결과
 ## nations 데이터셋 학습 후 정확도 측정
@@ -135,14 +147,15 @@ result = pipeline(
 |ComplEx|0.54|0.97|
 
 ## FB15K-237 데이터셋 학습 후 정확도 측정
+|모델/지표|MRR|Hits@10|
 |------|---|--------|
 |TransE|0.28|0.47|
 |RotatE|0.28|0.47|
-|ComplEx|0.54|0.97|
+|ComplEx|0.10|0.20|
 
 위 표를 보듯 nations 데이터셋에서는 RotatE가 가장 관계를 잘 나타냈다고 볼 수 있다.
 
-## 3D 시각화(nations 기준)
+## 3D 시각화(nations)
 # TransE
 <img width="999" height="783" alt="image" src="https://github.com/user-attachments/assets/785f4aa1-d9d3-4c02-9d0f-cc6b18adf1d9" />
 
@@ -162,5 +175,7 @@ result = pipeline(
 <img width="846" height="743" alt="image" src="https://github.com/user-attachments/assets/ebf013c1-29a2-41fd-8158-24a82f9d4bef" />
 
 # ComplEx
+<img width="886" height="781" alt="image" src="https://github.com/user-attachments/assets/e9b2ed89-f1f3-4a90-b996-84e20e3029b1" />
 
+---
 
